@@ -31,20 +31,27 @@ public class Map extends Activity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
         					 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         
+      //create the layout that you will use.
         RelativeLayout mLayout = new RelativeLayout(this); 
+      //create the map view that you will use.  
         mOSMap = new OpenStreetMapView(this.getApplicationContext(), OpenStreetMapRendererInfo.values()[OpenStreetMapRendererInfo.MAPNIK.ordinal()]);
+      //set built in zoom handles.   
         mOSMap.setBuiltInZoomControls(true);
+      //set multi-touch to true.
         mOSMap.setMultiTouchControls(true);
-        
+      //init your resource proxy (the file you created earlier).
         ResourceProxy mResourceProxy = new ResourceProxyImpl(getApplicationContext());
+      //create a layer - i created a location layer so that it will track the device's location.
         mLocationOverlay = new MyLocationOverlay(this.getBaseContext(), mOSMap, mResourceProxy);
-        
+      //add the layer you created to the map's layers.
         mOSMap.getOverlays().add(mLocationOverlay);
-        
+      //add the map to the layout while telling it to grab the whole screen.
         mLayout.addView(mOSMap, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+      //set the layout you created as the content view (what is visible since the creation of the activity).
         this.setContentView(mLayout);
-        
+      //set zoom (the number was chosen randomlly to get you acquainted with this feature). 
         mOSMap.getController().setZoom(17);
+      //set center of map to your location(or to 32.000000,35.000000 if the gps isn't on or functioning).  
         setMapCenter(mLocationOverlay.getMyLocation());
         
     }
@@ -76,6 +83,7 @@ public class Map extends Activity
     @Override
     public void onPause() 
     {
+    	//this feature is turned off when the activity is paused to save battery life.
     	mLocationOverlay.disableMyLocation();
     	super.onPause();
     }
@@ -85,7 +93,7 @@ public class Map extends Activity
     	super.onResume();
     	mOSMap.setRenderer(OpenStreetMapRendererInfo.values()[OpenStreetMapRendererInfo.MAPNIK.ordinal()]);
     	mLocationOverlay.enableMyLocation();
-    	mLocationOverlay.followLocation(true); //TODO - when in telaviv or in movement - uncomment!!!
+    	mLocationOverlay.followLocation(true); 
     }
      
     @Override

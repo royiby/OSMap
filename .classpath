@@ -5,7 +5,7 @@
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry kind="lib" path="assets/apache-mime4j-0.4.jar"/>
 	<classpathentry kind="lib" path="assets/httpmime-4.0-beta1.jar"/>
-	<classpathentry kind="lib" path="assets/slf4j-android-1.5.8.jar"/>
 	<classpathentry kind="lib" path="assets/osmdroid-android-1.04.jar"/>
+	<classpathentry kind="lib" path="assets/slf4j-android-1.5.8.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
