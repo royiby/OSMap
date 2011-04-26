@@ -1,2 +1,32 @@
 there's a guide to this code on 
 http://www.linnovate.net/blog/android-mapping-hebrew-or-using-osmdroid-api-ease
+
+changelog:
+I added an overlay that deals with non gps locations - ie stations:
+
+1. added the overlay class newItemizedOverlay.
+2. added this code to the map activity:
+      //grab your application's resources to use your drawables (in this case).
+        res = this.getResources();
+      //create an ArrayList of stations.
+        stations = new ArrayList<OpenStreetMapViewOverlayItem>();
+      //create station(s) (sorry for the 80's refference :)
+        stations.add(new OpenStreetMapViewOverlayItem("Here i am!", "rocking like a hurricane!!!", new GeoPoint(32.000000,35.000000)));
+      //create the overlay with the stations you created earlier and a marker base for the stations (i chose the android icon - very original, i know :)
+        mStationOverlay = new newItemizedOverlay<OpenStreetMapViewOverlayItem>
+        (
+        		this, 
+        		stations, 
+        		this.getResources().getDrawable(R.drawable.androidmarker), 
+        		null, 
+        		this.getResources().getDrawable(R.drawable.androidmarker), 
+        		null, 
+        		0, 
+        		null, 
+        		mResourceProxy
+        );
+       //add the stations overlay to the map
+        mOSMap.getOverlays().add(mStationOverlay); 
+I know that there's a problem with the afformentioned link, it will be resolved soon.
+
+good luck
