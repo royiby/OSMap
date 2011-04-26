@@ -1,14 +1,17 @@
 package com.linnovate.osmap;
 
+import java.util.ArrayList;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.MyLocationOverlay;
+import org.andnav.osm.views.overlay.OpenStreetMapViewOverlayItem;
 import org.andnav.osm.views.util.Mercator;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Window;
@@ -20,6 +23,12 @@ public class Map extends Activity
 {
 	public OpenStreetMapView mOSMap;
 	public MyLocationOverlay mLocationOverlay;
+	
+	public newItemizedOverlay<OpenStreetMapViewOverlayItem> mStationOverlay;
+	public ArrayList<OpenStreetMapViewOverlayItem> stations;
+	
+	public static GeoPoint gPoint = null;
+	public static Resources res;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) 
@@ -41,18 +50,46 @@ public class Map extends Activity
         mOSMap.setMultiTouchControls(true);
       //init your resource proxy (the file you created earlier).
         ResourceProxy mResourceProxy = new ResourceProxyImpl(getApplicationContext());
+      
+        /**XXX - new portion of code relating to non GPS data stations - START**/
+      //grab your application's resources to use your drawables (in this case).
+        res = this.getResources();
+      //create an ArrayList of stations.
+        stations = new ArrayList<OpenStreetMapViewOverlayItem>();
+      //create station(s) (sorry for the 80's refference :)
+        stations.add(new OpenStreetMapViewOverlayItem("Here i am!", "rocking like a hurricane!!!", new GeoPoint(32.000000,35.000000)));
+      //create the overlay with the stations you created earlier and a marker base for the stations (i chose the android icon - very original, i know :)
+        mStationOverlay = new newItemizedOverlay<OpenStreetMapViewOverlayItem>
+        (
+        		this, 
+        		stations, 
+        		this.getResources().getDrawable(R.drawable.androidmarker), 
+        		null, 
+        		this.getResources().getDrawable(R.drawable.androidmarker), 
+        		null, 
+        		0, 
+        		null, 
+        		mResourceProxy
+        );
+       //add the stations overlay to the map
+        mOSMap.getOverlays().add(mStationOverlay);
+        
+        /**XXX - new portion of code relating to non GPS data stations - END!**/  
+        
       //create a layer - i created a location layer so that it will track the device's location.
         mLocationOverlay = new MyLocationOverlay(this.getBaseContext(), mOSMap, mResourceProxy);
       //add the layer you created to the map's layers.
         mOSMap.getOverlays().add(mLocationOverlay);
       //add the map to the layout while telling it to grab the whole screen.
+        
         mLayout.addView(mOSMap, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
       //set the layout you created as the content view (what is visible since the creation of the activity).
         this.setContentView(mLayout);
-      //set zoom (the number was chosen randomlly to get you acquainted with this feature). 
+      //set zoom (the number was chosen randomly to get you acquainted with this feature). 
         mOSMap.getController().setZoom(17);
       //set center of map to your location(or to 32.000000,35.000000 if the gps isn't on or functioning).  
         setMapCenter(mLocationOverlay.getMyLocation());
+        //setMapCenter(new GeoPoint(32.000000,35.000000));
         
     }
     
@@ -63,7 +100,10 @@ public class Map extends Activity
     	if(geoPoint != null)
     		p = Mercator.projectGeoPoint(geoPoint, this.getPixelZoomLevel(), null);
     	else
-    		p = Mercator.projectGeoPoint(new GeoPoint(32.000000,35.000000), this.getPixelZoomLevel(), null);
+    	{
+    		gPoint = new GeoPoint(32.000000,35.000000);
+    		p = Mercator.projectGeoPoint(gPoint, this.getPixelZoomLevel(), null);
+    	}
     	
 		final int worldSize_2 = this.getWorldSizePx()/2;
 		mOSMap.scrollTo(p.x - worldSize_2, p.y - worldSize_2);
@@ -93,7 +133,7 @@ public class Map extends Activity
     	super.onResume();
     	mOSMap.setRenderer(OpenStreetMapRendererInfo.values()[OpenStreetMapRendererInfo.MAPNIK.ordinal()]);
     	mLocationOverlay.enableMyLocation();
-    	mLocationOverlay.followLocation(true); 
+    	mLocationOverlay.followLocation(true); //XXX - comment on\off if you want to follow your gps location
     }
      
     @Override
